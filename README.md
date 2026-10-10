@@ -122,7 +122,9 @@ well and is a good reference.
    tools/setup_libraries.sh cyd-ili9341    # or ESP32-2432S028R (cyd-st7789 for that panel)
    ```
 
-   TFT_eSPI is configured by a header inside the library, which ships set up
+   The script finds your sketchbook from the Arduino IDE 2 / arduino-cli
+   settings (OneDrive and localized folders included) and skips libraries
+   you already have. TFT_eSPI is configured by a header inside the library, which ships set up
    for an ESP8266 board. The script replaces it with this board's settings;
    run it again after every TFT_eSPI update. The sketch refuses to compile if
    the display setup is missing. On Windows, run it from Git Bash.
