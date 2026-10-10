@@ -8,3 +8,6 @@ size_t player_begin(const char *dir);
 
 // Name of the file playing now, or "" when idle.
 String player_current_track();
+
+// Skip to the next track.
+void player_next();

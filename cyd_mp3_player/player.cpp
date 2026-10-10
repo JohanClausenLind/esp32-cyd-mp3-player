@@ -10,6 +10,7 @@ using namespace libhelix;
 static std::vector<String> tracks;
 static String current_track;
 static SemaphoreHandle_t track_lock;
+static volatile bool skip_requested;
 
 static MP3DecoderHelix decoder;
 
@@ -65,11 +66,15 @@ static void play_file(const String &path)
     decoder.begin();
     uint8_t buf[1024];
     int n;
-    while ((n = f.read(buf, sizeof(buf))) > 0) {
+    skip_requested = false;
+    while (!skip_requested && (n = f.read(buf, sizeof(buf))) > 0) {
         decoder.write(buf, n);
     }
     decoder.end();
     f.close();
+    if (skip_requested) {
+        audio_out_flush();
+    }
 }
 
 static void player_task(void *)
@@ -122,4 +127,9 @@ String player_current_track()
     String name = current_track;
     xSemaphoreGive(track_lock);
     return name;
+}
+
+void player_next()
+{
+    skip_requested = true;
 }

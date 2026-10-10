@@ -9,10 +9,7 @@
 #include "config.h"
 #include "audio_out.h"
 #include "player.h"
-
-#ifndef CYD_USER_SETUP
-#error "TFT_eSPI is not configured for the CYD. Run tools/setup_libraries.sh (see README.md)."
-#endif
+#include "touch.h"
 
 static SPIClass sd_spi(VSPI);
 static TFT_eSPI tft;
@@ -36,6 +33,9 @@ void setup()
     tft.fillScreen(TFT_BLACK);
     tft.setTextColor(TFT_CYAN, TFT_BLACK);
     tft.drawString("CYD MP3 player", 10, 10, 4);
+    tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
+    tft.drawString(BOARD_NAME "   tap screen: next track", 10, 40, 2);
+    touch_begin();
 
     sd_spi.begin(PIN_SD_SCLK, PIN_SD_MISO, PIN_SD_MOSI, PIN_SD_CS);
     if (!SD.begin(PIN_SD_CS, sd_spi, 20000000)) {
@@ -56,10 +56,19 @@ void loop()
 {
     static String shown = "?";
     static bool was_connected = false;
+    static bool was_touched = false;
     if (!running) {
         delay(1000);
         return;
     }
+
+    uint16_t x, y;
+    bool touched = touch_read(&x, &y);
+    if (touched && !was_touched) {
+        Serial.printf("Tap at %u,%u: next track\n", x, y);
+        player_next();
+    }
+    was_touched = touched;
 
     bool connected = audio_out_connected();
     String track = player_current_track();
@@ -72,5 +81,5 @@ void loop()
         was_connected = connected;
         shown = track;
     }
-    delay(250);
+    delay(30);
 }

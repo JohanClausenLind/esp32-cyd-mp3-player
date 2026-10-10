@@ -1,6 +1,7 @@
 // TFT_eSPI setup for the ESP32-2432S028R "Cheap Yellow Display", ST7789 panel (often the dual-USB "CYD2USB" batch).
 // tools/setup_libraries.sh copies this over TFT_eSPI/User_Setup.h.
 #define CYD_USER_SETUP
+#define CYD_BOARD_2432S028R
 #define DISABLE_ALL_LIBRARY_WARNINGS  // touch is read with XPT2046_Touchscreen, not TFT_eSPI
 
 #define ST7789_DRIVER
